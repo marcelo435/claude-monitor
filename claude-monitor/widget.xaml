@@ -1,0 +1,15 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Claude Monitor · compacto" Width="268" Height="96" WindowStyle="None" ResizeMode="NoResize" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="True" Topmost="True" FontFamily="Segoe UI">
+ <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="theme.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></Window.Resources>
+ <Border x:Name="WidgetBody" Margin="8" Background="#26231E" CornerRadius="19" BorderBrush="#5A4A3A" BorderThickness="1" Padding="12" Cursor="Hand"><Border.Effect><DropShadowEffect BlurRadius="15" ShadowDepth="3" Opacity="0.32"/></Border.Effect>
+  <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+   <Border Width="36" Height="36" CornerRadius="12" Background="#3B2C22" VerticalAlignment="Center"><Viewbox Margin="6"><Path Data="{StaticResource ClaudeMark}" Fill="#E5A084"/></Viewbox></Border>
+   <StackPanel x:Name="WidgetDetails" Grid.Column="1" Margin="11,0,0,0" VerticalAlignment="Center">
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="14"/><ColumnDefinition/></Grid.ColumnDefinitions>
+     <StackPanel><Grid><TextBlock Text="5h" FontSize="10" Foreground="#B0A69A" VerticalAlignment="Center"/><TextBlock x:Name="MiniFive" Text="—" FontSize="15" FontWeight="SemiBold" HorizontalAlignment="Right"/></Grid><ProgressBar x:Name="MiniFiveBar" Height="3" Margin="0,4,0,0"/></StackPanel>
+     <StackPanel Grid.Column="2"><Grid><TextBlock Text="sem" FontSize="10" Foreground="#B0A69A" VerticalAlignment="Center"/><TextBlock x:Name="MiniWeek" Text="—" FontSize="15" FontWeight="SemiBold" HorizontalAlignment="Right"/></Grid><ProgressBar x:Name="MiniWeekBar" Height="3" Foreground="#9CBBA1" Margin="0,4,0,0"/></StackPanel>
+    </Grid>
+    <StackPanel Orientation="Horizontal" Margin="0,7,0,0"><Ellipse x:Name="WidgetDot" Width="5" Height="5" Fill="#A59F93" VerticalAlignment="Center" Margin="0,0,5,0"/><TextBlock x:Name="MiniState" Text="Conectando…" FontSize="9" Foreground="#B0A69A" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" MaxWidth="164"/></StackPanel>
+   </StackPanel>
+  </Grid>
+ </Border>
+</Window>

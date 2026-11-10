@@ -1,0 +1,9 @@
+{
+  "name": "claude-monitor-project",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Código e distribuição do Claude Monitor para Windows e VS Code.",
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "scripts": { "test": "node --test" }
+}

@@ -1,0 +1,39 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="Claude Monitor" Width="530" Height="810" MinWidth="450" MinHeight="570" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ResizeMode="CanResizeWithGrip" FontFamily="Segoe UI" WindowStartupLocation="CenterScreen">
+ <Window.Resources><ResourceDictionary><ResourceDictionary.MergedDictionaries><ResourceDictionary Source="theme.xaml"/></ResourceDictionary.MergedDictionaries></ResourceDictionary></Window.Resources>
+ <Border Margin="12" Background="#191815" CornerRadius="20" BorderBrush="#443E33" BorderThickness="1"><Border.Effect><DropShadowEffect Color="#000000" BlurRadius="22" ShadowDepth="4" Opacity="0.3"/></Border.Effect>
+ <Grid Margin="22,16,22,14"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <Grid x:Name="TitleDrag" Background="Transparent" Margin="0,0,0,16"><Grid.ColumnDefinitions><ColumnDefinition Width="44"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <Border Width="34" Height="34" Background="#38291F" CornerRadius="11" HorizontalAlignment="Left"><Viewbox Margin="6"><Path Data="{StaticResource ClaudeMark}" Fill="#DB997B"/></Viewbox></Border>
+   <StackPanel Grid.Column="1"><TextBlock Text="Claude Monitor" FontSize="20" FontWeight="SemiBold"/><TextBlock Text="USO E ATIVIDADE" FontSize="9" Foreground="{StaticResource Muted}" Margin="0,3,0,0"/></StackPanel>
+   <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top"><CheckBox x:Name="Pin" Content="Fixar" VerticalAlignment="Center" Margin="0,0,7,0" ToolTip="Manter o painel sempre por cima"/><Button x:Name="Minimize" Content="&#xE921;" Style="{StaticResource Chrome}" ToolTip="Minimizar para o widget flutuante"/><Button x:Name="Close" Content="&#xE8BB;" Style="{StaticResource Chrome}" ToolTip="Fechar monitor"/></StackPanel>
+  </Grid>
+  <StackPanel Grid.Row="1"><ComboBox x:Name="Sessions"/><TextBlock x:Name="Connection" Text="Conectando…" Foreground="{StaticResource Muted}" FontSize="10" Margin="1,7,0,0"/></StackPanel>
+  <Border Grid.Row="2" Style="{StaticResource Card}" Margin="0,15,0,12"><StackPanel>
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="27"/><ColumnDefinition/></Grid.ColumnDefinitions>
+    <StackPanel><TextBlock Text="ÚLTIMAS 5 HORAS" Style="{StaticResource Eyebrow}"/><TextBlock x:Name="FiveText" Text="—" FontSize="36" FontWeight="SemiBold" Margin="0,4,0,3"/><ProgressBar x:Name="FiveBar"/><TextBlock x:Name="FiveReset" Foreground="{StaticResource Muted}" FontSize="10" Margin="0,7,0,0"/></StackPanel>
+    <Border Grid.Column="1" Width="1" Background="{StaticResource Line}" Margin="0,0,0,4"/>
+    <StackPanel Grid.Column="2"><TextBlock Text="ESTA SEMANA" Style="{StaticResource Eyebrow}"/><TextBlock x:Name="WeekText" Text="—" FontSize="36" FontWeight="SemiBold" Margin="0,4,0,3"/><ProgressBar x:Name="WeekBar" Foreground="#9CBBA1"/><TextBlock x:Name="WeekReset" Foreground="{StaticResource Muted}" FontSize="10" Margin="0,7,0,0"/></StackPanel>
+   </Grid>
+   <TextBlock x:Name="OtherLimits" Foreground="{StaticResource Muted}" FontSize="10" Margin="0,10,0,0"/>
+   <TextBlock x:Name="QuotaNote" Text="Consultando seu plano…" Foreground="{StaticResource Muted}" FontSize="10" Margin="0,8,0,0"/>
+  </StackPanel></Border>
+  <Grid Grid.Row="3" Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition/></Grid.ColumnDefinitions><Button x:Name="TabOverview" Content="Visão geral" Background="#4C362A" Foreground="#F1BC9F" FontSize="11"/><Button x:Name="TabActivity" Grid.Column="1" Content="Atividade" Background="Transparent" Foreground="{StaticResource Muted}" FontSize="11" Margin="6,0,0,0"/><TextBlock x:Name="LiveBadge" Grid.Column="2" Text="LOCAL" HorizontalAlignment="Right" VerticalAlignment="Center" Style="{StaticResource Eyebrow}"/></Grid>
+  <Grid Grid.Row="4"><ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,7,0">
+   <StackPanel>
+    <StackPanel x:Name="Overview">
+     <Border Style="{StaticResource Card}"><StackPanel>
+      <TextBlock Text="CONVERSA ATUAL" Style="{StaticResource Eyebrow}"/><TextBlock x:Name="Model" Text="Aguardando conversa" FontSize="15" FontWeight="SemiBold" Margin="0,7,0,0"/><TextBlock x:Name="Phase" Foreground="#9CBBA1" FontSize="11" Margin="0,4,0,12"/>
+      <Grid><TextBlock Text="Contexto ocupado" FontSize="11" Foreground="{StaticResource Muted}"/><TextBlock x:Name="ContextText" Text="—" HorizontalAlignment="Right" FontSize="11"/></Grid><ProgressBar x:Name="ContextBar" Foreground="#ADA4C7" Margin="0,7,0,0"/>
+      <TextBlock x:Name="Project" Foreground="{StaticResource Muted}" FontSize="10" Margin="0,10,0,0"/>
+     </StackPanel></Border>
+     <Border Style="{StaticResource Card}"><StackPanel><TextBlock x:Name="AgentsTitle" Text="AGENTES" Style="{StaticResource Eyebrow}" Margin="0,0,0,12"/><StackPanel x:Name="Agents"/></StackPanel></Border>
+     <Border Style="{StaticResource Card}"><StackPanel><Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="TOKENS PROCESSADOS" Style="{StaticResource Eyebrow}"/><TextBlock x:Name="TotalTokens" Text="—" FontSize="21" Margin="0,5,0,0"/></StackPanel><StackPanel Grid.Column="1"><TextBlock Text="COM SUBAGENTES" Style="{StaticResource Eyebrow}"/><TextBlock x:Name="AllTokens" Text="—" FontSize="21" Margin="0,5,0,0"/></StackPanel></Grid><TextBlock x:Name="TokenDetails" Foreground="{StaticResource Muted}" FontSize="10" Margin="0,10,0,0"/></StackPanel></Border>
+    </StackPanel>
+    <StackPanel x:Name="ActivityPage" Visibility="Collapsed"><Border Style="{StaticResource Card}"><StackPanel><TextBlock Text="ATIVIDADE RECENTE" Style="{StaticResource Eyebrow}" Margin="0,0,0,12"/><StackPanel x:Name="Activity"/></StackPanel></Border></StackPanel>
+    <TextBlock x:Name="Notice" Foreground="#DB997B" FontSize="11" Margin="2,0,2,8"/>
+   </StackPanel>
+  </ScrollViewer></Grid>
+  <Grid Grid.Row="5" Margin="0,12,0,0"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><TextBlock x:Name="Updated" Text="Atualizando…" Foreground="{StaticResource Muted}" FontSize="9" VerticalAlignment="Center"/><Button x:Name="Help" Content="Ajuda" Grid.Column="1" Background="Transparent" Foreground="{StaticResource Muted}" FontSize="10" Padding="7,4"/></Grid>
+ </Grid></Border>
+</Window>

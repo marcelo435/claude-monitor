@@ -1,0 +1,6 @@
+{
+  "name": "local-monitor-tools",
+  "owner": { "name": "Local Tools" },
+  "metadata": { "description": "Limites e agentes do Claude Code para um monitor local.", "version": "0.3.0" },
+  "plugins": [{ "name": "local-monitor-bridge", "source": "./claude-monitor-bridge", "version": "0.2.0", "description": "Observação local de uso, ferramentas e agentes." }]
+}

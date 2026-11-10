@@ -1,0 +1,34 @@
+{
+  "name": "claude-monitor-local",
+  "displayName": "Claude Monitor Local",
+  "description": "Tokens, ferramentas e subagentes do Claude Code em um painel local.",
+  "version": "0.3.0",
+  "publisher": "local-tools",
+  "license": "MIT",
+  "engines": { "vscode": "^1.90.0" },
+  "main": "./extension.js",
+  "extensionKind": ["workspace"],
+  "activationEvents": ["onStartupFinished"],
+  "capabilities": { "untrustedWorkspaces": { "supported": false }, "virtualWorkspaces": false },
+  "contributes": {
+    "viewsContainers": { "activitybar": [{ "id": "claudeMonitor", "title": "Claude Monitor", "icon": "monitor.svg" }] },
+    "views": { "claudeMonitor": [{ "id": "claudeMonitor.overview", "name": "Uso e atividade" }] },
+    "commands": [
+      { "command": "claudeMonitor.refresh", "title": "Claude Monitor: Atualizar", "icon": "$(refresh)" },
+      { "command": "claudeMonitor.selectSession", "title": "Claude Monitor: Selecionar conversa", "icon": "$(list-selection)" },
+      { "command": "claudeMonitor.open", "title": "Claude Monitor: Abrir painel" },
+      { "command": "claudeMonitor.desktop", "title": "Claude Monitor: Abrir janela na área de trabalho", "icon": "$(link-external)" }
+    ],
+    "menus": { "view/title": [
+      { "command": "claudeMonitor.desktop", "when": "view == claudeMonitor.overview", "group": "navigation" },
+      { "command": "claudeMonitor.refresh", "when": "view == claudeMonitor.overview", "group": "navigation" },
+      { "command": "claudeMonitor.selectSession", "when": "view == claudeMonitor.overview", "group": "navigation" }
+    ] },
+    "configuration": { "title": "Claude Monitor", "properties": {
+      "claudeMonitor.projectsPath": { "type": "string", "default": "", "scope": "machine", "description": "Pasta projects do Claude Code. Vazio usa ~/.claude/projects. Em WSL/SSH, instale a extensão no mesmo ambiente do Claude." },
+      "claudeMonitor.refreshSeconds": { "type": "number", "default": 3, "minimum": 2, "maximum": 60, "description": "Intervalo de atualização." },
+      "claudeMonitor.workspaceOnly": { "type": "boolean", "default": true, "description": "Mostrar apenas conversas das pastas abertas no VS Code." }
+    } }
+  },
+  "scripts": { "test": "node --test test/*.test.js" }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "local-monitor-bridge",
+  "license": "MIT",
+  "version": "0.2.0",
+  "description": "Exporta limites do plano, contexto e agentes para o Claude Monitor local, sem rede nem credenciais.",
+  "author": { "name": "Local Tools" }
+}
