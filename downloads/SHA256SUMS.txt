@@ -1,2 +1,2 @@
-7b538c2751628f41efc753b0d7508ba704c6afe09e39b421a62f8852be466ecb  claude-monitor-local-0.3.0.vsix
-46b483b3a9831f73451d41e3a4ef3a5ac0a8603cbaecd5bea0f43a3917be2683  Claude-Monitor-0.3.0.zip
+f2b0aa3e16fd611b25e7b9a2626f64ac530fe25b5a866af2eb5a8b16a3d2da5d  claude-monitor-local-0.4.0.vsix
+5930b427327b1a051a6bc181e3041c1d6457449daffd8f6831d596a0218e1f1e  Claude-Monitor-0.4.0.zip

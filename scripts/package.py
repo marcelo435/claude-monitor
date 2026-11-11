@@ -3,6 +3,7 @@ from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 import hashlib
 import json
+import re
 import shutil
 import tempfile
 import xml.etree.ElementTree as ET
@@ -13,7 +14,7 @@ DIST = ROOT / 'dist'
 PACKAGE = json.loads((SOURCE / 'package.json').read_text(encoding='utf-8'))
 VERSION = PACKAGE['version']
 BINARY = ROOT / 'build' / 'ClaudeMonitor.exe'
-FILES = ['package.json', 'extension.js', 'core.js', 'bridge.js', 'quota.js',
+FILES = ['package.json', 'extension.js', 'core.js', 'bridge.js', 'quota.js', 'setup.js',
          'snapshot.js', 'desktop.js', 'desktop.xaml', 'widget.xaml', 'theme.xaml',
          'claude.ico', 'claude.png', 'claude-mark.svg', 'monitor.svg', 'README.md', 'LICENSE']
 PLUGIN_FILES = ['.claude-plugin/plugin.json', '.claude-plugin/icon.svg',
@@ -62,6 +63,17 @@ def content_types():
         ET.SubElement(root, '{'+ns+'}Override', PartName='/extension/'+name, ContentType='text/plain')
     return ET.tostring(root, encoding='utf-8', xml_declaration=True)
 
+def marketplace_files():
+    """(origem, caminho relativo) do marketplace local com o plugin observador."""
+    yield ROOT/'.claude-plugin'/'marketplace.json', '.claude-plugin/marketplace.json'
+    for name in PLUGIN_FILES:
+        yield ROOT/'claude-monitor-bridge'/name, 'claude-monitor-bridge/'+name
+
+def script(name):
+    """Script PowerShell com BOM (o Windows PowerShell 5.1 precisa dele para ler acentos)."""
+    text = (ROOT/'scripts'/name).read_text(encoding='utf-8-sig')
+    return re.sub(r"\$taskVersion = '[^']*'", "$taskVersion = '"+VERSION+"'", text)
+
 def main():
     if not BINARY.is_file():
         raise SystemExit('Compile primeiro: ./scripts/build.ps1')
@@ -74,6 +86,8 @@ def main():
             archive.write(SOURCE/name, 'extension/'+name)
         archive.write(BINARY, 'extension/ClaudeMonitor.exe')
         archive.write(ROOT/'NOTICE', 'extension/NOTICE')
+        for source, name in marketplace_files():
+            archive.write(source, 'extension/marketplace/'+name)
     with ZipFile(vsix) as archive:
         assert archive.testzip() is None
         ET.fromstring(archive.read('extension.vsixmanifest'))
@@ -92,17 +106,13 @@ def main():
         shutil.copy2(ROOT/'NOTICE', app/'NOTICE')
         shutil.copy2(vsix, bundle/vsix.name)
         shutil.copy2(ROOT/'README.md', bundle/'LEIA-ME.md')
-        installer = (ROOT/'scripts'/'Instalar.ps1').read_text(encoding='utf-8-sig')
-        installer = installer.replace('claude-monitor-local-0.3.0.vsix', vsix.name)
-        (bundle/'Instalar.ps1').write_text(installer, encoding='utf-8-sig')
-        shutil.copy2(ROOT/'scripts'/'Instalar.cmd', bundle/'Instalar.cmd')
-        market = bundle/'marketplace'
-        (market/'.claude-plugin').mkdir(parents=True)
-        shutil.copy2(ROOT/'.claude-plugin'/'marketplace.json', market/'.claude-plugin'/'marketplace.json')
-        for name in PLUGIN_FILES:
-            dest = market/'claude-monitor-bridge'/name
+        for name in ['Instalar.ps1', 'Desinstalar.ps1']:
+            (bundle/name).write_text(script(name), encoding='utf-8-sig', newline='\r\n')
+        (bundle/'Instalar.cmd').write_text((ROOT/'scripts'/'Instalar.cmd').read_text(encoding='utf-8'), encoding='ascii', newline='\r\n')
+        for source, name in marketplace_files():
+            dest = bundle/'marketplace'/name
             dest.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(ROOT/'claude-monitor-bridge'/name, dest)
+            shutil.copy2(source, dest)
         with ZipFile(full, 'w', ZIP_DEFLATED) as archive:
             for file in sorted(bundle.rglob('*')):
                 if file.is_file():

@@ -5,7 +5,8 @@ const os = require('node:os');
 const { Monitor, clean } = require('./core');
 const { BridgeStore, configDir } = require('./bridge');
 const { spawn } = require('node:child_process');
-const { QuotaStore, decoratePlan } = require('./quota');
+const { QuotaStore, decoratePlan, findClaude } = require('./quota');
+const { pluginInstalled, installPlugin } = require('./setup');
 const format = n => new Intl.NumberFormat('pt-BR').format(n);
 const total = t => t.input + t.output + t.cacheRead + t.cacheWrite;
 
@@ -14,10 +15,10 @@ function activate(context) {
   const bridge = new BridgeStore();
   const quota = new QuotaStore();
   const changed = new vscode.EventEmitter();
-  let selected = '', busy = false, stopped = false, lastScan = 0;
+  let selected = '', busy = false, stopped = false, lastScan = 0, pluginOk = true, installing = false;
   const status = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 40);
   status.command = 'claudeMonitor.open'; status.name = 'Claude Monitor';
-  const row = (label, description = '', children, tip = '') => ({ label, description, children, tip });
+  const row = (label, description = '', children, tip = '', command) => ({ label, description, children, tip, command });
   const chosen = () => monitor.sessions.find(s => s.main.file === selected) || monitor.sessions[0];
   const tools = t => [...t.tools.values()].sort((a,b) => b.time-a.time);
   function usage(t) {
@@ -47,8 +48,11 @@ function activate(context) {
         `${w.resetsAt?'Renova: '+new Date(w.resetsAt).toLocaleString('pt-BR'): 'Renovação não informada'}\nExportado pelo Claude: ${new Date(live.publishedAt).toLocaleString('pt-BR')}\nNão é uma estimativa por tokens.`))));
       if(live.context.percent!==undefined)out.push(row('Janela de contexto',`${live.context.percent}% · ${format(live.context.tokens||0)} / ${format(live.context.window||0)}`));
       out.push(row('Agentes · estado informado pelo Claude',String(live.agents.length),live.agents.map(a=>row(a.name||a.type||a.id,`${a.statusLabel}${live.online?'':' · último estado conhecido'}`,undefined,a.id))));
-    }else out.push(row('Agentes em tempo real','Aguardando conexão do plugin Local Monitor Bridge',undefined,
-      'Instale o plugin que acompanha a versão 0.2 e reabra a conversa do Claude. Os percentuais chegam automaticamente, sem executar /usage.'));
+    }else if(!pluginOk)out.push(row('$(plug) Instalar plugin do Claude',installing?'Instalando…':'Clique para ativar os agentes em tempo real',undefined,
+      'Instala o plugin Local Monitor Bridge pelo CLI oficial do Claude. Depois, reabra a conversa ou execute /reload-plugins.',
+      installing?undefined:{command:'claudeMonitor.installPlugin',title:'Instalar plugin'}));
+    else out.push(row('Agentes em tempo real','Aguardando a conversa carregar o plugin',undefined,
+      'Plugin instalado. Reabra a conversa do Claude ou execute /reload-plugins uma vez. Os percentuais chegam automaticamente, sem executar /usage.'));
     if (monitor.error) out.push(row('Aviso',monitor.error));
     if (!session) return [...out, row('Nenhuma conversa encontrada', 'Envie uma mensagem ao Claude neste projeto'),
       row('Outros projetos', 'Desative Workspace Only nas configurações para listar os demais projetos'),
@@ -82,10 +86,31 @@ function activate(context) {
     getChildren: item => item ? item.children || [] : roots(),
     getTreeItem: item => {
       const t = new vscode.TreeItem(clean(item.label,250), item.children?.length ? vscode.TreeItemCollapsibleState.Expanded : vscode.TreeItemCollapsibleState.None);
-      t.description = clean(item.description,300); t.tooltip = item.tip || `${t.label}: ${t.description}`; return t;
+      t.description = clean(item.description,300); t.tooltip = item.tip || `${t.label}: ${t.description}`;
+      if (item.command) t.command = item.command;
+      return t;
     }
   };
   const view = vscode.window.createTreeView('claudeMonitor.overview',{ treeDataProvider:provider });
+  async function setupPlugin() {
+    if (installing) return;
+    installing = true; changed.fire();
+    try {
+      await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Claude Monitor: instalando o plugin do Claude…' },
+        async () => installPlugin({ extensionPath: context.extensionPath, binary: await findClaude() }));
+      pluginOk = true;
+      const pick = await vscode.window.showInformationMessage('Plugin instalado. Execute /reload-plugins na conversa do Claude (ou reabra a conversa) para ver os agentes em tempo real.', 'Copiar /reload-plugins');
+      if (pick) await vscode.env.clipboard.writeText('/reload-plugins');
+    } catch (error) {
+      vscode.window.showErrorMessage(`Claude Monitor: não foi possível instalar o plugin. ${error.message}`);
+    } finally { installing = false; void refresh(true); }
+  }
+  async function offerPlugin() {
+    if (await pluginInstalled() || context.globalState.get('claudeMonitor.skipPluginPrompt')) return;
+    const pick = await vscode.window.showInformationMessage('Claude Monitor: instale o plugin do Claude para ver agentes e limites em tempo real.', 'Instalar plugin', 'Agora não', 'Não perguntar de novo');
+    if (pick === 'Instalar plugin') await setupPlugin();
+    else if (pick === 'Não perguntar de novo') await context.globalState.update('claudeMonitor.skipPluginPrompt', true);
+  }
   async function refresh(force=false) {
     if (busy || stopped || !vscode.workspace.isTrusted) return;
     const cfg=vscode.workspace.getConfiguration('claudeMonitor');
@@ -93,7 +118,8 @@ function activate(context) {
     busy=true; lastScan=Date.now();
     try {
       const root=cfg.get('projectsPath','') || path.join(configDir(),'projects');
-      await Promise.all([monitor.scan(root,(vscode.workspace.workspaceFolders || []).map(f=>f.uri.fsPath),cfg.get('workspaceOnly',true)),bridge.scan(),quota.load()]);
+      await Promise.all([monitor.scan(root,(vscode.workspace.workspaceFolders || []).map(f=>f.uri.fsPath),cfg.get('workspaceOnly',true)),bridge.scan(),quota.load(),
+        pluginInstalled().then(ok=>{pluginOk=ok;})]);
       void quota.refresh();
       if (stopped) return;
       changed.fire();
@@ -120,6 +146,7 @@ function activate(context) {
     }),
     vscode.commands.registerCommand('claudeMonitor.open',()=>vscode.commands.executeCommand('claudeMonitor.overview.focus')),
     vscode.commands.registerCommand('claudeMonitor.refresh',()=>refresh(true)),
+    vscode.commands.registerCommand('claudeMonitor.installPlugin',()=>setupPlugin()),
     vscode.commands.registerCommand('claudeMonitor.selectSession',async()=>{
       const items=monitor.sessions.map(s=>({label:`${s.main.model || 'Claude'} · ${path.basename(s.main.file,'.jsonl').slice(0,12)}`,description:s.main.cwd,detail:s.main.lastTime ? new Date(s.main.lastTime).toLocaleString('pt-BR') : '',file:s.main.file}));
       const item=await vscode.window.showQuickPick(items,{placeHolder:'Escolha a conversa que deseja acompanhar'});
@@ -131,5 +158,6 @@ function activate(context) {
   const timer=setInterval(()=>{void refresh();},1000);
   context.subscriptions.push({dispose(){stopped=true;clearInterval(timer);quota.dispose();}});
   void refresh(true);
+  if (vscode.workspace.isTrusted) void offerPlugin();
 }
 module.exports={activate};

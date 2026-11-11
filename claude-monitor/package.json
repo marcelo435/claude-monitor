@@ -2,7 +2,7 @@
   "name": "claude-monitor-local",
   "displayName": "Claude Monitor Local",
   "description": "Tokens, ferramentas e subagentes do Claude Code em um painel local.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "local-tools",
   "license": "MIT",
   "engines": { "vscode": "^1.90.0" },
@@ -17,7 +17,8 @@
       { "command": "claudeMonitor.refresh", "title": "Claude Monitor: Atualizar", "icon": "$(refresh)" },
       { "command": "claudeMonitor.selectSession", "title": "Claude Monitor: Selecionar conversa", "icon": "$(list-selection)" },
       { "command": "claudeMonitor.open", "title": "Claude Monitor: Abrir painel" },
-      { "command": "claudeMonitor.desktop", "title": "Claude Monitor: Abrir janela na área de trabalho", "icon": "$(link-external)" }
+      { "command": "claudeMonitor.desktop", "title": "Claude Monitor: Abrir janela na área de trabalho", "icon": "$(link-external)" },
+      { "command": "claudeMonitor.installPlugin", "title": "Claude Monitor: Instalar plugin do Claude" }
     ],
     "menus": { "view/title": [
       { "command": "claudeMonitor.desktop", "when": "view == claudeMonitor.overview", "group": "navigation" },

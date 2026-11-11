@@ -2,16 +2,29 @@
 
 Extensão para VS Code e widget de área de trabalho para acompanhar o uso do Claude Code. Interface em português, limites do plano, tokens e atividade dos agentes.
 
-## Instalar em outro VS Code
+## Instalar
 
-**Versão atual: Windows.** É necessário ter VS Code, a extensão oficial Claude Code com login ativo e Node.js 22 ou superior. O aplicativo de desktop usa o .NET Framework 4.8 do Windows.
+**Versão atual: Windows.** Antes, tenha o VS Code com a extensão oficial **Claude Code** e login feito. Para a janela de desktop, também é preciso o [Node.js](https://nodejs.org) 22 ou superior.
 
-1. Baixe [a extensão `.vsix`](downloads/claude-monitor-local-0.3.0.vsix?raw=true).
-2. No outro VS Code, abra **Extensões → ⋯ → Instalar do VSIX** e escolha o arquivo.
-3. Para usar também o widget e os estados dos agentes, baixe o [pacote completo para Windows](downloads/Claude-Monitor-0.3.0.zip?raw=true), extraia e execute **Instalar.cmd**.
-4. Reabra o VS Code e a conversa do Claude uma vez para carregar a atualização e o plugin.
+### Jeito mais fácil: pacote completo
 
-Mantenha a pasta extraída: o atalho aponta para o aplicativo dentro dela. Cada computador usa seu próprio login do Claude. A extensão não é publicada no Visual Studio Marketplace; a instalação é pelo arquivo `.vsix`.
+1. Baixe o [pacote completo](downloads/Claude-Monitor-0.4.0.zip?raw=true) e extraia.
+2. Dê dois cliques em **Instalar.cmd** e acompanhe os passos na janela.
+3. Na conversa do Claude, execute `/reload-plugins` uma vez (ou reabra a conversa).
+
+O instalador copia tudo para `%LOCALAPPDATA%\Claude Monitor`, instala o plugin do Claude e a extensão do VS Code e cria atalhos na área de trabalho e no Menu Iniciar. **Depois de instalar, a pasta extraída pode ser apagada.** Rodar de novo atualiza a instalação.
+
+### Só a extensão do VS Code
+
+1. Baixe [a extensão `.vsix`](downloads/claude-monitor-local-0.4.0.vsix?raw=true).
+2. No VS Code: **Extensões → ⋯ → Instalar do VSIX** e escolha o arquivo.
+3. Clique em **Instalar plugin** no aviso que aparece (ou no painel do Claude Monitor) e depois execute `/reload-plugins` na conversa do Claude.
+
+### Desinstalar
+
+**Configurações → Aplicativos → Aplicativos instalados → Claude Monitor → Desinstalar.** Isso remove o aplicativo, o plugin, a extensão, os atalhos e os dados do monitor, sem mexer no seu login ou nas conversas do Claude.
+
+Cada computador usa seu próprio login do Claude. A extensão não é publicada no Visual Studio Marketplace; a instalação é pelo arquivo `.vsix`.
 
 ## Recursos
 

@@ -1,4 +1,4 @@
-# Claude Monitor — versão 0.3
+# Claude Monitor — versão 0.4
 
 Monitor local em português para acompanhar o Claude Code dentro e fora do VS Code.
 
@@ -22,17 +22,17 @@ Esta versão inclui o plugin **Local Monitor Bridge** para Claude Code 2.1.319 o
 
 Os números do plano são os que o Claude informa; não são estimados por tokens. **Não precisa executar `/usage`**. O monitor solicita ao CLI oficial uma consulta automática a cada 5 minutos, inclusive com o VS Code fechado. A primeira consulta pode levar alguns segundos; dado ausente nunca vira 0%. Nenhuma mensagem é enviada ao modelo. O protocolo de controle foi validado com o Claude Code 2.1.319 e pode exigir atualização se o Claude mudar esse formato.
 
-O plugin precisa estar carregado na conversa. Depois da primeira instalação ou atualização, reabra a conversa do Claude ou execute `/reload-plugins` uma única vez. O instalador não envia mensagens ao modelo e não inicia tarefas ou subagentes.
+O plugin precisa estar carregado na conversa. Depois da primeira instalação ou atualização, reabra a conversa do Claude ou execute `/reload-plugins` uma única vez. Se o plugin não estiver instalado, a extensão mostra um aviso com o botão **Instalar plugin** (também disponível no painel e no comando **Claude Monitor: Instalar plugin do Claude**). O instalador não envia mensagens ao modelo e não inicia tarefas ou subagentes.
 
 O uso do plano continua sendo consultado com o VS Code fechado. Se a consulta falhar, o monitor identifica os últimos dados como antigos. Uma janela cujo horário de renovação já passou aparece como “Aguardando nova leitura”. Novas ações e estados reais dos agentes exigem uma sessão do Claude ativa com o plugin carregado; estados antigos nunca são apresentados como execução atual.
 
 ## Instalar o conjunto
 
-No pacote **Claude-Monitor-0.3.0**, execute `Instalar.cmd`. O instalador registra o plugin local pelo CLI oficial do Claude, instala a extensão `.vsix` no VS Code e cria um atalho na área de trabalho. Não altera configurações de segurança e não configura inicialização automática do Windows. O resultado fica em `instalacao.log`, na pasta do pacote.
+No pacote **Claude-Monitor-0.4.0**, dê dois cliques em `Instalar.cmd`. Uma janela mostra cada passo: o instalador copia o aplicativo e o plugin para `%LOCALAPPDATA%\Claude Monitor`, registra o plugin pelo CLI oficial do Claude, instala a extensão `.vsix` no VS Code (encontra o VS Code mesmo fora do PATH) e cria atalhos na área de trabalho e no Menu Iniciar. Ao final, oferece abrir o monitor. Não altera configurações de segurança e não configura inicialização automática do Windows. O registro fica em `instalacao.log`, na pasta de instalação.
 
-Mantenha a pasta extraída no local de instalação: o aplicativo e o marketplace local dependem dela. Para usar em outro computador, extraia o pacote e execute o instalador nesse computador.
+A pasta extraída pode ser apagada depois da instalação. Para atualizar, extraia a versão nova e execute `Instalar.cmd` de novo. Para remover, use **Configurações → Aplicativos → Aplicativos instalados → Claude Monitor**: o desinstalador remove o aplicativo, o plugin, a extensão, os atalhos e os dados em `~/.claude/claude-monitor`, sem tocar no login nem nas conversas.
 
-Para instalação manual: no VS Code abra Extensões → `…` → **Instalar do VSIX** e selecione `claude-monitor-local-0.3.0.vsix`. Registre o marketplace da pasta `marketplace` com `claude plugin marketplace add <caminho>` e instale `local-monitor-bridge@local-monitor-tools`. Reabra o Claude.
+Para instalar só a extensão: no VS Code abra Extensões → `…` → **Instalar do VSIX**, selecione `claude-monitor-local-0.4.0.vsix` e clique em **Instalar plugin** no aviso que aparecer.
 
 ## VS Code
 
