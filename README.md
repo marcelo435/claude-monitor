@@ -1,5 +1,10 @@
 # Claude Monitor
 
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
+![Node.js](https://img.shields.io/badge/Node.js-5FA04E?logo=nodedotjs&logoColor=white)
+![VS Code Extension](https://img.shields.io/badge/VS_Code_Extension-007ACC?logo=vscodium&logoColor=white)
+![WPF](https://img.shields.io/badge/WPF-512BD4?logo=dotnet&logoColor=white)
+
 Extensão para VS Code e widget de área de trabalho para acompanhar o uso do Claude Code. Interface em português, limites do plano, tokens e atividade dos agentes.
 
 ## Instalar
